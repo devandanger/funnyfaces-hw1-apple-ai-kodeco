@@ -23,35 +23,38 @@ struct Prediction {
 }
 typealias ImagePredictionHandler = (_ predictions: [Prediction]?) -> Void
 
-class ModelManager: NSObject, ObservableObject {
+class ModelInferenceManager: NSObject, ObservableObject {
 //    @Published var visionImage: VisionImage?
     private var predictionHandlers: [VNRequest: ImagePredictionHandler] = [:]
     let currentPrediction: PassthroughSubject<Prediction, Never> = PassthroughSubject()
 
     var buffer: PassthroughSubject<CMSampleBuffer, Never> = PassthroughSubject()
-    static let shared = ModelManager()
-    lazy var imageClassifier: AnimalClassifier1 = {
-        return try! AnimalClassifier1(configuration: MLModelConfiguration())
-    }()
+    static let shared = ModelInferenceManager()
+  let modelProvider = ModelProvider.shared
+
     
-    lazy var coreModel: VNCoreMLModel = {
-        return try! VNCoreMLModel(for: model)
-    }()
+//    lazy var coreModel: VNCoreMLModel = {
+//        return try! VNCoreMLModel(for: model)
+//    }()
     
-    lazy var model: MLModel = {
-        return imageClassifier.model
-    }()
+//    lazy var model: MLModel = {
+//        return imageClassifier.model
+//    }()
+//  
+//    lazy var imageClassifier: AnimalClassifier1 = {
+//        return try! AnimalClassifier1(configuration: MLModelConfiguration())
+//    }()
     
     private var subscriptions = Set<AnyCancellable>()
-    private func createRequest() -> VNImageBasedRequest {
-        let imageClassificationRequest = VNCoreMLRequest(
-            model: coreModel,
-            completionHandler: visionRequestHandler
-        )
-
-        imageClassificationRequest.imageCropAndScaleOption = .centerCrop
-        return imageClassificationRequest
-    }
+//    private func createRequest() -> VNImageBasedRequest {
+//        let imageClassificationRequest = VNCoreMLRequest(
+//            model: coreModel,
+//            completionHandler: visionRequestHandler
+//        )
+//
+//        imageClassificationRequest.imageCropAndScaleOption = .centerCrop
+//        return imageClassificationRequest
+//    }
     
     private override init() {
         super.init()
@@ -61,12 +64,9 @@ class ModelManager: NSObject, ObservableObject {
             .receive(on: RunLoop.current)
             .sink { buffer in
                 let handler = VNImageRequestHandler(cmSampleBuffer: buffer)
-                let request = self.createRequest()
 
                 do {
-                    try handler.perform([
-                        self.createRequest()
-                    ])
+                  try handler.perform(self.modelProvider.requests)
                 } catch {
                     print("Unable to process: \(error.localizedDescription)")
                 }

@@ -25,7 +25,8 @@ class CameraController: ObservableObject {
 
     private let cameraManager = CameraManager.shared
     private let frameManager = FrameManager.shared
-    private let modelManager = ModelManager.shared
+    private let modelInferenceManager = ModelInferenceManager.shared
+    private let modelProvider = ModelProvider.shared
     private var subscriptions = Set<AnyCancellable>()
 
     init() {
@@ -45,7 +46,7 @@ class CameraController: ObservableObject {
             })
             .compactMap { $0 }
             .sink { buffer in
-                self.modelManager.buffer.send(buffer)
+                self.modelInferenceManager.buffer.send(buffer)
             }
             .store(in: &subscriptions)
 
@@ -71,7 +72,7 @@ class CameraController: ObservableObject {
               }
               .assign(to: &$frame)
         
-        modelManager.currentPrediction
+        modelInferenceManager.currentPrediction
             .sink { prediction in
                 
                 self.found = .found(identifier: prediction.classification)
