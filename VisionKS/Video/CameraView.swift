@@ -18,15 +18,12 @@ struct RealtimeCameraView: View {
           }
           ErrorView(error: model.error)
           ControlView(
-              showDebugPanel: $showDebugPanel,
-              comicSelected: $model.comicFilter,
-              monoSelected: $model.monoFilter,
-              crystalSelected: $model.crystalFilter, visionModelSelected: $model.visionModelSelected
+            showDebugPanel: $showDebugPanel,
+            visionModelSelected: $model.visionModelSelected,
+            detectFaces: $model.detectFaces
           )
       }
-//        .sheet(isPresented: $showDebugPanel) {
-//            DebugPanelView(labels: $model.labels)
-//        }
+
   }
 }
 

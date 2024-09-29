@@ -20,6 +20,11 @@ class CameraController: ObservableObject {
     var monoFilter = false
     var crystalFilter = false
     var visionModelSelected = false
+  var detectFaces: Bool = false {
+    didSet {
+      ModelProvider.shared.toggleFaceDetection(detectFaces)
+    }
+  }
 
     private let context = CIContext()
 
@@ -34,7 +39,6 @@ class CameraController: ObservableObject {
     }
 
     func setupSubscriptions() {
-    // swiftlint:disable:next array_init
         cameraManager.$error
             .receive(on: RunLoop.main)
             .map { $0 }
@@ -78,32 +82,5 @@ class CameraController: ObservableObject {
                 self.found = .found(identifier: prediction.classification)
             }
             .store(in: &subscriptions)
-        
-//        modelManager.$visionImage
-//            .compactMap { $0 }
-//            .sink { visionImage in
-//                let options: CommonImageLabelerOptions = ImageLabelerOptions()
-//                options.confidenceThreshold = NSNumber(floatLiteral: 0.7)
-//                let onDeviceLabeler = ImageLabeler.imageLabeler(options: options)
-//
-//                do {
-//                    let labels = try onDeviceLabeler.results(in: visionImage)
-//
-//                    let results = labels.map { label -> String in
-//                        return "Label: \(label.text), Confidence: \(label.confidence), Index: \(label.index)"
-//                    }.joined(separator: "\n")
-//                    print("Results: \(results)")
-//
-//                    DispatchQueue.main.async {
-//                        self.labelingResults = results
-//                        self.labels.append(contentsOf: labels)
-//                    }
-//
-//                } catch let error {
-//                    self.labelingResults = ""
-//                    print("Error analyzing image: \(error.localizedDescription)")
-//                }
-//            }
-//            .store(in: &subscriptions)
     }
 }

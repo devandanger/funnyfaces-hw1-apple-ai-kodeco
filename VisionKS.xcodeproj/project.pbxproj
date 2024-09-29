@@ -35,7 +35,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8A6635D72CA885210011EAE8 /* Camera */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Camera; sourceTree = "<group>"; };
+		8A6635D72CA885210011EAE8 /* Video */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Video; sourceTree = "<group>"; };
 		8A6635E52CA8864E0011EAE8 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		8A6635E62CA886620011EAE8 /* ImagePicker */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ImagePicker; sourceTree = "<group>"; };
 		8A6635E72CA8872C0011EAE8 /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
@@ -76,7 +76,7 @@
 				8A6635E72CA8872C0011EAE8 /* Extensions */,
 				8A6635E62CA886620011EAE8 /* ImagePicker */,
 				8A6635E52CA8864E0011EAE8 /* App */,
-				8A6635D72CA885210011EAE8 /* Camera */,
+				8A6635D72CA885210011EAE8 /* Video */,
 				D4445CBB2C5A8DFD002CC20F /* TextDetectionView.swift */,
 				D4445CBD2C5A8E64002CC20F /* TextDetectionViewModel.swift */,
 				D4445CBF2C5A8E9D002CC20F /* ImageViewModel.swift */,
@@ -117,7 +117,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				8A6635D72CA885210011EAE8 /* Camera */,
+				8A6635D72CA885210011EAE8 /* Video */,
 				8A6635E52CA8864E0011EAE8 /* App */,
 				8A6635E62CA886620011EAE8 /* ImagePicker */,
 				8A6635E72CA8872C0011EAE8 /* Extensions */,

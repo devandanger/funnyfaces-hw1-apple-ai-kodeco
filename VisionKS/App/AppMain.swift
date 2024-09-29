@@ -54,15 +54,24 @@ struct FaceAndTextDetectionApp: App {
             }
         }.navigationTitle("Vision Demo")
         .toolbar {
+//          ToolbarItem(placement: .navigationBarTrailing) {
+//            NavigationLink {
+//              RealtimeCameraView()
+//            } label: {
+//              Image(systemName: "video")
+//                .imageScale(.large)
+//            }
+//          }
           ToolbarItem(placement: .navigationBarTrailing) {
-            PhotosPicker(
-              selection: $photoPickerViewModel.imageSelection,
-              matching: .images,
-              photoLibrary: .shared()
-            ) {
-              Image(systemName: "photo.on.rectangle.angled")
+            NavigationLink {
+              CameraView()
+            } label: {
+              Image(systemName: "camera")
                 .imageScale(.large)
             }
+
+          }
+          ToolbarItem(placement: .navigationBarTrailing) {
             PhotosPicker(
               selection: $photoPickerViewModel.imageSelection,
               matching: .images,
