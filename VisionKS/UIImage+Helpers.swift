@@ -66,13 +66,19 @@ extension UIImage {
       // Calculate the rectangle using Vision's coordinate system to image coordinates.
       let correctedRect = VNImageRectForNormalizedRect(visionRect, Int(imageSize.width), Int(imageSize.height))
       // Draw the vision rectangle with a red fill and stroke.
-      UIColor.red.withAlphaComponent(0.3).setFill()
-      let rectPath = UIBezierPath(rect: correctedRect)
-      rectPath.fill()
+      // UIColor.red.withAlphaComponent(0.3).setFill()
+      // let rectPath = UIBezierPath(rect: correctedRect)
+      // rectPath.fill()
       
-      UIColor.red.setStroke()
-      rectPath.lineWidth = 2.0
-      rectPath.stroke()
+      // UIColor.red.setStroke()
+      // rectPath.lineWidth = 2.0
+      // rectPath.stroke()
+
+
+      // Draw a UIImage into rect
+      let image = UIImage(named: "FunnyFace")!
+      let imageRect = CGRect(x: correctedRect.origin.x, y: correctedRect.origin.y, width: correctedRect.width, height: correctedRect.height)
+      image.draw(in: imageRect)
     }
     // Get the resulting image from the current context.
     let newImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -159,11 +165,6 @@ extension UIImage {
     return correctlyOrientedImage
   }
   
-  /// Adjusts the orientation of the image based on its current orientation.
-  ///
-  /// This method is private and only accessible within the extension to ensure that it is only used internally.
-  ///
-  /// - Returns: The adjusted orientation that is the mirrored counterpart of the image's current orientation.
   private func adjustOrientation() -> UIImage.Orientation {
     switch self.imageOrientation {
     case .up:
