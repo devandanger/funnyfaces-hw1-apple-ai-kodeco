@@ -36,11 +36,13 @@ import PhotosUI
 @main
 struct FaceAndTextDetectionApp: App {
   @StateObject private var photoPickerViewModel = PhotoPickerViewModel()
+  @StateObject private var cameraViewModel = CameraViewModel()
+  @State private var showCameraPicker = false
   var body: some Scene {
     WindowGroup {
       NavigationView {
         TabView {
-          FacesView(viewModel: .init(photoPickerViewModel: photoPickerViewModel))
+          FacesView(viewModel: .init(photoPickerViewModel: photoPickerViewModel), cameraViewModel: cameraViewModel)
             .tabItem {
               Label("Faces", systemImage: "face.smiling")
             }
@@ -52,7 +54,12 @@ struct FaceAndTextDetectionApp: App {
 //            .tabItem {
 //              Label("Animals", systemImage: "dog")
 //            }
-        }.navigationTitle("Vision Demo")
+        }
+        .navigationTitle("Vision Demo")
+        .sheet(isPresented: $showCameraPicker) {
+          // Pass the capturedImage binding to the CameraPicker so it can update the selected image.
+          CameraPicker(selectedImage: $cameraViewModel.capturedImage)
+        }
         .toolbar {
 //          ToolbarItem(placement: .navigationBarTrailing) {
 //            NavigationLink {
@@ -63,12 +70,19 @@ struct FaceAndTextDetectionApp: App {
 //            }
 //          }
           ToolbarItem(placement: .navigationBarTrailing) {
-            NavigationLink {
-              CameraView()
+            Button {
+              self.showCameraPicker = true
             } label: {
               Image(systemName: "camera")
                 .imageScale(.large)
             }
+
+//            NavigationLink {
+//              CameraView()
+//            } label: {
+//              Image(systemName: "camera")
+//                .imageScale(.large)
+//            }
 
           }
           ToolbarItem(placement: .navigationBarTrailing) {

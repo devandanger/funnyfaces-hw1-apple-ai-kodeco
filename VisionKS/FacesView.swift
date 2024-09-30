@@ -35,29 +35,22 @@ import PhotosUI
 
 struct FacesView: View {
   @StateObject var viewModel: ImageViewModel
+  @StateObject var cameraViewModel: CameraViewModel
   
   var body: some View {
     VStack {
-      if let image = viewModel.photoPickerViewModel.selectedPhoto?.image.drawVisionRects(viewModel.faceRectangles) {
+      if let image = viewModel.photoPickerViewModel.selectedPhoto?.image.drawVisionRects(viewModel.faceObservations) {
         Image(uiImage: image)
           .resizable()
           .aspectRatio(contentMode: .fit)
         
         HStack {
-          Button("Previous") {
-            viewModel.previousFace()
-          }
-          .padding()
-          
+          Spacer()
           Button("Detect Faces") {
             viewModel.detectFaces()
           }
           .padding()
-          
-          Button("Next") {
-            viewModel.nextFace()
-          }
-          .padding()
+          Spacer()
         }
         
         if let errorMessage = viewModel.errorMessage {

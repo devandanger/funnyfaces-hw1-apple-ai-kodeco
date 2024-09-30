@@ -31,11 +31,12 @@
 /// THE SOFTWARE.
 
 import UIKit
+import AVFoundation
 import Vision
 import OSLog
 
 extension UIImage {
-  func drawVisionRects(_ multipleRects: [CGRect]) -> UIImage? {
+  func drawVisionRects(_ multipleRects: [VNFaceObservation]) -> UIImage? {
     
     logger.debug("Original UIImage has an orientation of: \(self.imageOrientation.rawValue)")
     // Ensure the image's CGImage representation is available.
@@ -62,14 +63,21 @@ extension UIImage {
     // Draw the original image in the context.
     context.draw(cgImage, in: CGRect(origin: .zero, size: imageSize))
     
-    multipleRects.forEach { visionRect in
-      // Calculate the rectangle using Vision's coordinate system to image coordinates.
-      let correctedRect = VNImageRectForNormalizedRect(visionRect, Int(imageSize.width), Int(imageSize.height))
-      // Draw a UIImage into flipped rect
-      let image = UIImage(named: "FunnyFace")!
-      let imageRect = CGRect(x: correctedRect.origin.x, y: correctedRect.origin.y, width: correctedRect.width, height: correctedRect.height)
+    multipleRects.forEach { vision in
+      let nose2Image = UIImage(named: "Nose")!
+      let eye = UIImage(named: "Eye")!
       
-      image.draw(in: imageRect)
+      let imageBox = CGSize(width: imageSize.width, height: imageSize.height)
+      let expansion = CGSize(width: 5, height: 5)
+      if let leftEye = vision.landmarks?.leftEye {
+        eye.drawForFace(inFace: vision.boundingBox, for: leftEye, box: imageBox, withExpansion: expansion)
+      }
+      if let rightEye = vision.landmarks?.rightEye {
+        eye.drawForFace(inFace: vision.boundingBox, for: rightEye, box: imageBox, withExpansion: expansion)
+      }
+      if let noseCrest = vision.landmarks?.nose {
+        nose2Image.drawForFace(inFace: vision.boundingBox, for: noseCrest, box: imageBox, withExpansion: expansion)
+      }
     }
     // Get the resulting image from the current context.
     let newImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -180,3 +188,31 @@ extension UIImage {
   }
 }
 
+
+extension UIImage {
+  func drawForFace(inFace faceRect: CGRect, for landmark: VNFaceLandmarkRegion2D, box: CGSize, withExpansion: CGSize) {
+    let points = landmark.normalizedPoints
+    let minX = points.min { $0.x < $1.x }!.x
+    let minY = points.min { $0.y < $1.y }!.y
+    let maxX = points.max { $0.x < $1.x }!.x
+    let maxY = points.max { $0.y < $1.y }!.y
+
+    let minPoint = VNImagePointForFaceLandmarkPoint(
+      vector_float2(Float(minX), Float(minY)),
+      faceRect,
+      Int(box.width),
+      Int(box.height))
+    let maxPoint = VNImagePointForFaceLandmarkPoint(
+      vector_float2(Float(maxX), Float(maxY)),
+      faceRect,
+      Int(box.width),
+      Int(box.height))
+    let correctedRect = CGRect(
+      x: minPoint.x,
+      y: minPoint.y,
+      width: maxPoint.x - minPoint.x,
+      height: maxPoint.y - minPoint.y)
+      .insetBy(dx: -withExpansion.width, dy: -withExpansion.height)
+    self.draw(in: correctedRect)
+  }
+}

@@ -38,7 +38,7 @@ import OSLog
 let logger = Logger() as Logger
 
 class ImageViewModel: ObservableObject {
-  @Published var faceRectangles: [CGRect] = []
+  @Published var faceObservations: [VNFaceObservation] = []
   @Published var currentIndex: Int = 0
   @Published var errorMessage: String? = nil
   @Published var detectedFacesImage: UIImage? = nil
@@ -67,7 +67,7 @@ class ImageViewModel: ObservableObject {
       return
     }
     
-    let faceDetectionRequest = VNDetectFaceRectanglesRequest { [weak self] request, error in
+    let faceDetectionRequest = VNDetectFaceLandmarksRequest { [weak self] request, error in
       if let error = error {
         DispatchQueue.main.async {
           self?.errorMessage = "Face detection error: \(error.localizedDescription)"
@@ -75,13 +75,27 @@ class ImageViewModel: ObservableObject {
         return
       }
       
-      let rectangles: [CGRect] = request.results?.compactMap {
+      
+      let rectangles: [VNFaceObservation] = request.results?.compactMap {
         guard let observation = $0 as? VNFaceObservation else { return nil }
-        return observation.boundingBox
+        return observation
       } ?? []
       
+      print("Found \(rectangles.count) faces")
+      
+      rectangles.forEach {
+        if let le = $0.landmarks?.leftEye {
+          print("Found left eye \(le.normalizedPoints)")
+        }
+        if let re = $0.landmarks?.rightEye {
+          print("Found right eye \(re.normalizedPoints)")
+        }
+        
+        
+      }
+      
       DispatchQueue.main.async {
-        self?.faceRectangles = rectangles
+        self?.faceObservations = rectangles
         self?.errorMessage = rectangles.isEmpty ? "No faces detected" : nil
       }
     }
@@ -109,18 +123,18 @@ class ImageViewModel: ObservableObject {
   }
   
   func nextFace() {
-    if faceRectangles.isEmpty { return }
-    currentIndex = (currentIndex + 1) % faceRectangles.count
+    if faceObservations.isEmpty { return }
+    currentIndex = (currentIndex + 1) % faceObservations.count
   }
   
   func previousFace() {
-    if faceRectangles.isEmpty { return }
-    currentIndex = (currentIndex - 1 + faceRectangles.count) % faceRectangles.count
+    if faceObservations.isEmpty { return }
+    currentIndex = (currentIndex - 1 + faceObservations.count) % faceObservations.count
   }
   
   var currentFace: CGRect? {
-    guard !faceRectangles.isEmpty else { return nil }
-    return faceRectangles[currentIndex]
+    guard !faceObservations.isEmpty else { return nil }
+    return faceObservations[currentIndex].boundingBox
   }
   
   func adjustOrientation(orient: UIImage.Orientation) -> UIImage.Orientation {
