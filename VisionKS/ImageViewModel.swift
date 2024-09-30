@@ -41,10 +41,12 @@ class ImageViewModel: ObservableObject {
   @Published var faceRectangles: [CGRect] = []
   @Published var currentIndex: Int = 0
   @Published var errorMessage: String? = nil
+  @Published var detectedFacesImage: UIImage? = nil
   
   // Shared PhotoPickerViewModel
   @Published var photoPickerViewModel: PhotoPickerViewModel
   
+  private var cancellables: Set<AnyCancellable> = []
   init(photoPickerViewModel: PhotoPickerViewModel) {
     self.photoPickerViewModel = photoPickerViewModel
   }
@@ -208,4 +210,19 @@ class ImageViewModel: ObservableObject {
     
     return correctlyOrientedImage
   }
+}
+
+extension Publisher {
+    func asyncMap<T>(
+        _ transform: @escaping (Output) async -> T
+    ) -> Publishers.FlatMap<Future<T, Never>, Self> {
+        flatMap { value in
+            Future { promise in
+                Task {
+                    let output = await transform(value)
+                    promise(.success(output))
+                }
+            }
+        }
+    }
 }

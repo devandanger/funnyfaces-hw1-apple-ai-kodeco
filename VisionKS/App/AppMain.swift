@@ -44,14 +44,14 @@ struct FaceAndTextDetectionApp: App {
             .tabItem {
               Label("Faces", systemImage: "face.smiling")
             }
-          TextDetectionView(viewModel: .init(photoPickerViewModel: photoPickerViewModel))
-            .tabItem {
-              Label("Text", systemImage: "textformat")
-            }
-          ObjectDetectionView(viewModel: .init(photoPickerViewModel: photoPickerViewModel))
-            .tabItem {
-              Label("Animals", systemImage: "dog")
-            }
+//          TextDetectionView(viewModel: .init(photoPickerViewModel: photoPickerViewModel))
+//            .tabItem {
+//              Label("Text", systemImage: "textformat")
+//            }
+//          ObjectDetectionView(viewModel: .init(photoPickerViewModel: photoPickerViewModel))
+//            .tabItem {
+//              Label("Animals", systemImage: "dog")
+//            }
         }.navigationTitle("Vision Demo")
         .toolbar {
 //          ToolbarItem(placement: .navigationBarTrailing) {

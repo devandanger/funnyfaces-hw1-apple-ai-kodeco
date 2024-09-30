@@ -35,6 +35,64 @@ import Vision
 import OSLog
 
 extension UIImage {
+  func drawVisionRects(_ multipleRects: [CGRect]) -> UIImage? {
+    
+    logger.debug("Original UIImage has an orientation of: \(self.imageOrientation.rawValue)")
+    // Ensure the image's CGImage representation is available.
+    
+    guard let cgImage = self.cgImage else {
+      return nil
+    }
+    
+    // If visionRect is not provided, return the original image.
+    guard multipleRects.count > 0 else {
+      return self
+    }
+    
+    // Prepare the context size based on the image dimensions.
+    let imageSize = CGSize(width: cgImage.width, height: cgImage.height)
+    
+    // Begin a new image context with the correct size and scale.
+    UIGraphicsBeginImageContextWithOptions(imageSize, false, self.scale)
+    
+    guard let context = UIGraphicsGetCurrentContext() else {
+      return nil
+    }
+    
+    // Draw the original image in the context.
+    context.draw(cgImage, in: CGRect(origin: .zero, size: imageSize))
+    
+    multipleRects.forEach { visionRect in
+      // Calculate the rectangle using Vision's coordinate system to image coordinates.
+      let correctedRect = VNImageRectForNormalizedRect(visionRect, Int(imageSize.width), Int(imageSize.height))
+      // Draw the vision rectangle with a red fill and stroke.
+      UIColor.red.withAlphaComponent(0.3).setFill()
+      let rectPath = UIBezierPath(rect: correctedRect)
+      rectPath.fill()
+      
+      UIColor.red.setStroke()
+      rectPath.lineWidth = 2.0
+      rectPath.stroke()
+    }
+    // Get the resulting image from the current context.
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    
+    // End the image context to free up resources.
+    UIGraphicsEndImageContext()
+    
+    // Adjust the image's orientation before returning.
+    guard let finalCgImage = newImage?.cgImage else {
+      return nil
+    }
+    
+    let correctlyOrientedImage = UIImage(
+      cgImage: finalCgImage,
+      scale: self.scale,
+      orientation: self.adjustOrientation()
+    )
+    logger.debug("Final image needs an orientation of \(correctlyOrientedImage.imageOrientation.rawValue) to look right.")
+    return correctlyOrientedImage
+  }
   /// Draws a vision rectangle on the image, adjusting for the image's orientation.
   ///
   /// This method is the main point of access, allowing you to draw a red rectangle on the image based on a vision rectangle.

@@ -38,7 +38,7 @@ struct FacesView: View {
   
   var body: some View {
     VStack {
-      if let image = viewModel.photoPickerViewModel.selectedPhoto?.image.drawVisionRect(viewModel.currentFace) {
+      if let image = viewModel.photoPickerViewModel.selectedPhoto?.image.drawVisionRects(viewModel.faceRectangles) {
         Image(uiImage: image)
           .resizable()
           .aspectRatio(contentMode: .fit)
