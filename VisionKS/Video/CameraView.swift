@@ -3,6 +3,7 @@ import SwiftUI
 struct RealtimeCameraView: View {
   @StateObject private var model = CameraController()
   @State private var showDebugPanel: Bool = false
+  @StateObject private var modelProvider: ModelProvider = ModelProvider.shared
 
   var body: some View {
       ZStack {
@@ -16,12 +17,15 @@ struct RealtimeCameraView: View {
           } else {
               
           }
-          ErrorView(error: model.error)
-          ControlView(
-            showDebugPanel: $showDebugPanel,
-            visionModelSelected: $model.visionModelSelected,
-            detectFaces: $model.detectFaces
-          )
+        if modelProvider.faceObservations.count > 0 {
+          ForEach(modelProvider.faceObservations, id: \.uuid) { observation in
+            Circle()
+              .stroke(style: StrokeStyle(lineWidth: 2))
+              .frame(width: 10, height: 10)
+              .position(x: observation.boundingBox.midX, y: observation.boundingBox.midY)
+          }
+        }
+        ErrorView(error: model.error)
       }
 
   }

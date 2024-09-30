@@ -6,13 +6,24 @@ class ModelProvider: NSObject, ObservableObject {
   
   var requests: [VNRequest] = []
   
-  let faceDetectionRequest: VNDetectFaceRectanglesRequest = VNDetectFaceRectanglesRequest { request, error in
+  @Published var faceObservations: [VNFaceObservation] = []
+  
+  lazy var faceDetectionRequest: VNDetectFaceLandmarksRequest = VNDetectFaceLandmarksRequest { request, error in
     if let error = error {
       print("Error with face detection: \(error.localizedDescription)")
       return
     } else {
-      print("Able to find it faces")
+      guard let results = request.results else { return }
+      self.faceObservations = results.compactMap { observation in
+        guard let faceObservation = observation as? VNFaceObservation else { return nil }
+        return faceObservation
+      }
     }
+  }
+  
+  private override init() {
+    super.init()
+    self.requests = [self.faceDetectionRequest]
   }
   
   func toggleFaceDetection(_ toggle: Bool) {

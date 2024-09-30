@@ -19,7 +19,7 @@ class CameraController: ObservableObject {
     var comicFilter = false
     var monoFilter = false
     var crystalFilter = false
-    var visionModelSelected = false
+    var visionModelSelected = true
   var detectFaces: Bool = false {
     didSet {
       ModelProvider.shared.toggleFaceDetection(detectFaces)
@@ -45,9 +45,6 @@ class CameraController: ObservableObject {
             .assign(to: &$error)
         
         frameManager.$currentSample
-            .filter({ _ in
-                return self.visionModelSelected
-            })
             .compactMap { $0 }
             .sink { buffer in
                 self.modelInferenceManager.buffer.send(buffer)

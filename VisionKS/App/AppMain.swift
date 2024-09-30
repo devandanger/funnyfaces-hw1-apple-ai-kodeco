@@ -61,29 +61,13 @@ struct FaceAndTextDetectionApp: App {
           CameraPicker(selectedImage: $cameraViewModel.capturedImage)
         }
         .toolbar {
-//          ToolbarItem(placement: .navigationBarTrailing) {
-//            NavigationLink {
-//              RealtimeCameraView()
-//            } label: {
-//              Image(systemName: "video")
-//                .imageScale(.large)
-//            }
-//          }
           ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-              self.showCameraPicker = true
+            NavigationLink {
+              RealtimeCameraView()
             } label: {
-              Image(systemName: "camera")
+              Image(systemName: "video")
                 .imageScale(.large)
             }
-
-//            NavigationLink {
-//              CameraView()
-//            } label: {
-//              Image(systemName: "camera")
-//                .imageScale(.large)
-//            }
-
           }
           ToolbarItem(placement: .navigationBarTrailing) {
             PhotosPicker(
